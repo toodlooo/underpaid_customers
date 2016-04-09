@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.12: http://docutils.sourceforge.net/" />
+<title>Solution</title>
+<link rel="stylesheet" href="http://fellowship.hackbrightacademy.com/tools/homework.css" type="text/css" />
+</head>
+<body>
+<div class="document" id="solution">
+<h1 class="title">Solution</h1>
+
+<div class="section" id="code">
+<h1>Code</h1>
+<pre class="literal-block">
+MELON_COST = 1.00
+
+
+def melon_payment_calculator(payment_data_filename):
+    &quot;&quot;&quot;Calculate cost of melons and determine who has underpaid.&quot;&quot;&quot;
+
+    payment_data = open(payment_data_filename)
+
+    for line in payment_data:
+        order = line.split('|')
+
+        customer_name = order[1]
+        customer_first = customer_name.split(&quot; &quot;)[0]
+        customer_melons = float(order[2])
+        customer_paid = float(order[3])
+
+        customer_expected = customer_melons * MELON_COST
+
+        if customer_expected &lt; customer_paid:
+            print &quot;{} paid ${:.2f}, expected ${:.2f}&quot;.format(
+                customer_name, customer_paid, customer_expected)
+            print &quot;{} has overpaid for their melons.&quot;.format(customer_first)
+
+        elif customer_expected &gt; customer_paid:
+            print &quot;{} paid ${:.2f}, expected ${:.2f}&quot;.format(
+                customer_name, customer_paid, customer_expected)
+            print &quot;{} has underpaid for their melons.&quot;.format(customer_first)
+
+    payment_data.close()
+
+melon_payment_calculator(&quot;customer-orders.txt&quot;)
+
+</pre>
+</div>
+<div class="section" id="notes">
+<h1>Notes</h1>
+<ul>
+<li><p class="first">Why is <tt class="docutils literal">MELON_COST</tt> defined outside of the function? Why is it in all-caps?
+Think about this -- we'll ask you about it when we review this homework.</p>
+</li>
+<li><p class="first">In lines 12-15, we're getting the elements individually from the list by
+indexing them. We could also do this by unpacking, like:</p>
+<pre class="code python literal-block">
+<span class="name">order_id</span><span class="punctuation">,</span> <span class="name">customer_name</span><span class="punctuation">,</span> <span class="name">customer_melons</span><span class="punctuation">,</span> <span class="name">customer_paid</span> <span class="operator">=</span> <span class="name">order</span>
+<span class="name">customer_melons</span> <span class="operator">=</span> <span class="name builtin">float</span><span class="punctuation">(</span><span class="name">customer_melons</span><span class="punctuation">)</span>
+<span class="name">customer_paid</span> <span class="operator">=</span> <span class="name builtin">float</span><span class="punctuation">(</span><span class="name">customer_paid</span><span class="punctuation">)</span>
+<span class="name">customer_first</span> <span class="operator">=</span> <span class="name">customer_name</span><span class="operator">.</span><span class="name">split</span><span class="punctuation">(</span><span class="literal string double">&quot; &quot;</span><span class="punctuation">)[</span><span class="literal number integer">0</span><span class="punctuation">]</span>
+</pre>
+</li>
+<li><p class="first">In lines 19-27, we repeat:</p>
+<pre class="code python literal-block">
+<span class="keyword">print</span> <span class="literal string double">&quot;</span><span class="literal string interpol">%s</span><span class="literal string double"> paid </span><span class="literal string interpol">%.2f</span><span class="literal string double">, expected </span><span class="literal string interpol">%.2f</span><span class="literal string double">&quot;</span> <span class="operator">%</span> <span class="punctuation">(</span>
+    <span class="name">customer_name</span><span class="punctuation">,</span> <span class="name">customer_paid</span><span class="punctuation">,</span> <span class="name">customer_expected</span><span class="punctuation">)</span>
+</pre>
+<p>We use this for both underpaying and overpaying, and the underpaid/overpaid
+messages are also very similar.</p>
+<p>We could generalize some of this like:</p>
+<pre class="code python literal-block">
+<span class="keyword">if</span> <span class="name">customer_expected</span> <span class="operator">!=</span> <span class="name">customer_paid</span><span class="punctuation">:</span>
+    <span class="keyword">if</span> <span class="name">customer_expected</span> <span class="operator">&lt;</span> <span class="name">customer_paid</span><span class="punctuation">:</span>
+        <span class="name">diff</span> <span class="operator">=</span> <span class="literal string double">&quot;underpaid&quot;</span>
+    <span class="keyword">else</span><span class="punctuation">:</span>
+        <span class="name">diff</span> <span class="operator">=</span> <span class="literal string double">&quot;overpaid&quot;</span>
+
+    <span class="keyword">print</span> <span class="literal string double">&quot;</span><span class="literal string interpol">%s</span><span class="literal string double"> paid </span><span class="literal string interpol">%.2f</span><span class="literal string double">, expected </span><span class="literal string interpol">%.2f</span><span class="literal string double">&quot;</span> <span class="operator">%</span> <span class="punctuation">(</span>
+        <span class="name">customer_name</span><span class="punctuation">,</span> <span class="name">customer_paid</span><span class="punctuation">,</span> <span class="name">customer_expected</span><span class="punctuation">)</span>
+    <span class="keyword">print</span> <span class="literal string double">&quot;</span><span class="literal string interpol">%s</span><span class="literal string double"> has </span><span class="literal string interpol">%s</span><span class="literal string double"> for their melons.&quot;</span> <span class="operator">%</span> <span class="punctuation">(</span><span class="name">customer_first</span><span class="punctuation">,</span> <span class="name">diff</span><span class="punctuation">)</span>
+</pre>
+</li>
+<li><p class="first"><strong>Advanced</strong> new idea:
+We could even refine the last point with some Python you haven't seen before:
+the &quot;ternary operator&quot;. This allows us to write conditionals very succinctly.</p>
+<p>This could replace the code in the point above with:</p>
+<pre class="code python literal-block">
+<span class="keyword">if</span> <span class="name">customer_expected</span> <span class="operator">!=</span> <span class="name">customer_paid</span><span class="punctuation">:</span>
+    <span class="name">diff</span> <span class="operator">=</span> <span class="literal string double">&quot;underpaid&quot;</span> <span class="keyword">if</span> <span class="name">customer_expected</span> <span class="operator">&lt;</span> <span class="name">customer_paid</span> <span class="keyword">else</span> <span class="literal string double">&quot;overpaid&quot;</span>
+
+    <span class="keyword">print</span> <span class="literal string double">&quot;</span><span class="literal string interpol">%s</span><span class="literal string double"> paid </span><span class="literal string interpol">%.2f</span><span class="literal string double">, expected </span><span class="literal string interpol">%.2f</span><span class="literal string double">&quot;</span> <span class="operator">%</span> <span class="punctuation">(</span>
+        <span class="name">customer_name</span><span class="punctuation">,</span> <span class="name">customer_paid</span><span class="punctuation">,</span> <span class="name">customer_expected</span><span class="punctuation">)</span>
+    <span class="keyword">print</span> <span class="literal string double">&quot;</span><span class="literal string interpol">%s</span><span class="literal string double"> has </span><span class="literal string interpol">%s</span><span class="literal string double"> for their melons.&quot;</span> <span class="operator">%</span> <span class="punctuation">(</span><span class="name">customer_first</span><span class="punctuation">,</span> <span class="name">diff</span><span class="punctuation">)</span>
+</pre>
+<p>You can read more about the
+<a class="reference external" href="http://www.pythoncentral.io/one-line-if-statement-in-python-ternary-conditional-operator/">ternary operator</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</body>
+</html>
